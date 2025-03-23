@@ -27,6 +27,7 @@ export default function Signup() {
   const router = useRouter();
 
   const handleSignup = async () => {
+    console.log("username HANDLESIGNUP", username);
     const result = await register(username, email, password);
 
     if (!result.success) {
@@ -65,7 +66,7 @@ export default function Signup() {
                   placeholder="user123"
                   placeholderTextColor={COLORS.placeholderText}
                   value={username}
-                  onChange={setUsername}
+                  onChangeText={setUsername}
                   autoCapitalize="none"
                 />
               </View>
