@@ -12,6 +12,8 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true });
 
     try {
+      console.log("☀️");
+
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
