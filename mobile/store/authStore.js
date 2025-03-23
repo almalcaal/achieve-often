@@ -11,9 +11,21 @@ export const useAuthStore = create((set) => ({
   register: async (username, email, password) => {
     set({ isLoading: true });
 
+    // console.log("username:", username);
+    // console.log("password:", password);
+    // console.log("email:", email);
     try {
-      console.log("☀️");
-
+      console.log("Fetching:", `{BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
       const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -31,6 +43,7 @@ export const useAuthStore = create((set) => ({
       if (!response.ok) throw new Error(data.message || "Something went wrong");
 
       //   comes from data returned from auth.controller.js
+      console.log("DATA.USER:", data.user);
       await AsyncStorage.setItem("user", JSON.stringify(data.user));
       await AsyncStorage.setItem("token", data.token);
 
