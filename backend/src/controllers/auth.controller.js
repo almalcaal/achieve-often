@@ -30,7 +30,11 @@ export const registerUser = async (req, res) => {
         .json({ message: "Username must be at least 3 characters" });
     }
 
-    const existingUsername = await User.findOne({ username });
+    const lowerCaseUsername = username.toLowerCase();
+
+    const existingUsername = await User.findOne({
+      username: lowerCaseUsername,
+    });
     if (existingUsername) {
       return res.status(400).json({ message: "Username already in use" });
     }
