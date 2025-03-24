@@ -22,6 +22,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    dailyHabits: {
+      type: Map, // Use a Map to store daily counts
+      of: {
+        goodCount: { type: Number, default: 0 },
+        badCount: { type: Number, default: 0 },
+      },
+      default: {},
+    },
   },
   { timestamps: true }
 );

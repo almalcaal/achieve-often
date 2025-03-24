@@ -1,4 +1,8 @@
-import { generateToken, validateEmail } from "../lib/utils.js";
+import {
+  generateToken,
+  getStartOfDayInUserTimezone,
+  validateEmail,
+} from "../lib/utils.js";
 import User from "../models/user.model.js";
 
 // @desc            Register a new user
@@ -106,6 +110,199 @@ export const loginUser = async (req, res) => {
     });
   } catch (err) {
     console.log("Error in loginUser controller", err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// @desc            Increment user good habit
+// @route           PUT /api/auth/:userId/good
+// @access          Private
+export const incrementGoodHabit = async (req, res) => {
+  try {
+    const { timezone } = req.body;
+    if (!timezone) {
+      return res.status(400).json({ message: "Timezone is required" });
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const startOfUserDayUTC = getStartOfDayInUserTimezone(new Date(), timezone);
+    const dateString = startOfUserDayUTC.toISOString().split("T")[0];
+
+    if (!user.dailyHabits.has(dateString)) {
+      user.dailyHabits.set(dateString, { goodCount: 0, badCount: 0 });
+    }
+
+    const dailyCounts = user.dailyHabits.get(dateString);
+    dailyCounts.goodCount += 1;
+    user.dailyHabits.set(dateString, dailyCounts);
+
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    console.log(`ERROR in incrementGoodHabit controller`, err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// @desc            Increment user bad habit
+// @route           PUT /api/auth/:userId/bad
+// @access          Private
+export const incrementBadHabit = async (req, res) => {
+  try {
+    const { timezone } = req.body;
+    if (!timezone) {
+      return res.status(400).json({ message: "Timezone is required" });
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const startOfUserDayUTC = getStartOfDayInUserTimezone(new Date(), timezone);
+    const dateString = startOfUserDayUTC.toISOString().split("T")[0];
+
+    if (!user.dailyHabits.has(dateString)) {
+      user.dailyHabits.set(dateString, { goodCount: 0, badCount: 0 });
+    }
+
+    const dailyCounts = user.dailyHabits.get(dateString);
+    dailyCounts.badCount += 1;
+    user.dailyHabits.set(dateString, dailyCounts);
+
+    await user.save();
+    res.json(user);
+  } catch (err) {
+    console.log(`ERROR in incrementBadHabit controller`, err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// @desc            Decrement user good habit
+// @route           PUT /api/auth/:userId/good/decrement
+// @access          Private
+export const decrementGoodHabit = async (req, res) => {
+  try {
+    const { timezone } = req.body;
+    if (!timezone) {
+      return res.status(400).json({ message: "Timezone is required" });
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const startOfUserDayUTC = getStartOfDayInUserTimezone(new Date(), timezone);
+    const dateString = startOfUserDayUTC.toISOString().split("T")[0];
+
+    if (user.dailyHabits.has(dateString)) {
+      const dailyCounts = user.dailyHabits.get(dateString);
+      if (dailyCounts.goodCount > 0) {
+        dailyCounts.goodCount -= 1;
+        user.dailyHabits.set(dateString, dailyCounts);
+        await user.save();
+        res.status(200).json(user);
+      } else {
+        return res
+          .status(400)
+          .json({ message: "Good habit count cannot be negative" });
+      }
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Daily habit not found for this day" });
+    }
+  } catch (err) {
+    console.log(`ERROR in decrementGoodHabit controller`, err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// @desc            Decrement user bad habit
+// @route           PUT /api/auth/:userId/bad/decrement
+// @access          Private
+export const decrementBadHabit = async (req, res) => {
+  try {
+    const { timezone } = req.body;
+    if (!timezone) {
+      return res.status(400).json({ message: "Timezone is required" });
+    }
+
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const startOfUserDayUTC = getStartOfDayInUserTimezone(new Date(), timezone);
+    const dateString = startOfUserDayUTC.toISOString().split("T")[0];
+
+    if (user.dailyHabits.has(dateString)) {
+      const dailyCounts = user.dailyHabits.get(dateString);
+      if (dailyCounts.badCount > 0) {
+        dailyCounts.badCount -= 1;
+        user.dailyHabits.set(dateString, dailyCounts);
+        await user.save();
+        res.status(200).json(user);
+      } else {
+        return res
+          .status(400)
+          .json({ message: "Bad habit count cannot be negative" });
+      }
+    } else {
+      return res
+        .status(404)
+        .json({ message: "Daily habit not found for this day" });
+    }
+  } catch (err) {
+    console.log(`ERROR in decrementBadHabit controller`, err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// @desc            Get user habits
+// @route           GET /api/auth/:userId/habits
+// @access          Private
+export const getUserHabits = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const timezone = req.query.timezone;
+    if (!timezone) {
+      return res.status(400).json({ message: "Timezone is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const localizedDailyHabits = Array.from(user.dailyHabits.entries()).map(
+      ([dateString, counts]) => {
+        const localizedDate = new Date(dateString);
+        const formatter = new Intl.DateTimeFormat("en-US", {
+          timeZone: timezone,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+
+        const formattedDate = formatter.format(localizedDate);
+
+        return {
+          date: dateString,
+          localizedDate: formattedDate,
+          goodCount: counts.goodCount,
+          badCount: counts.badCount,
+        };
+      }
+    );
+
+    res.status(200).json(localizedDailyHabits);
+  } catch (err) {
+    console.log(`ERROR in getUserHabits controller`, err.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

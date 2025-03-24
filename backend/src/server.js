@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import { scheduleDailyHabitJob } from "./lib/cronJobs.js";
+
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -9,6 +11,9 @@ import { connectDB } from "./lib/db.js";
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
+// to schedule the cron job
+// scheduleDailyHabitJob();
 
 app.use(
   express.json({
