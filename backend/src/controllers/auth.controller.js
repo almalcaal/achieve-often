@@ -274,6 +274,10 @@ export const getUserHabits = async (req, res) => {
   try {
     const userId = req.params.userId;
     const timezone = req.query.timezone;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
     if (!timezone) {
       return res.status(400).json({ message: "Timezone is required" });
     }
@@ -283,28 +287,41 @@ export const getUserHabits = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const localizedDailyHabits = Array.from(user.dailyHabits.entries()).map(
-      ([dateString, counts]) => {
-        const localizedDate = new Date(dateString);
-        const formatter = new Intl.DateTimeFormat("en-US", {
-          timeZone: timezone,
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        });
+    const dailyHabitsArray = Array.from(user.dailyHabits.entries());
 
-        const formattedDate = formatter.format(localizedDate);
+    // Sort by date (newest to oldest)
+    dailyHabitsArray.sort((a, b) => new Date(b[0]) - new Date(a[0]));
 
-        return {
-          date: dateString,
-          localizedDate: formattedDate,
-          goodCount: counts.goodCount,
-          badCount: counts.badCount,
-        };
-      }
-    );
+    // Apply pagination
+    const paginatedHabits = dailyHabitsArray.slice(skip, skip + limit);
 
-    res.status(200).json(localizedDailyHabits);
+    const localizedDailyHabits = paginatedHabits.map(([dateString, counts]) => {
+      const localizedDate = new Date(dateString);
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone: timezone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      const formattedDate = formatter.format(localizedDate);
+
+      return {
+        date: dateString,
+        localizedDate: formattedDate,
+        goodCount: counts.goodCount,
+        badCount: counts.badCount,
+      };
+    });
+
+    const totalHabits = dailyHabitsArray.length;
+
+    res.status(200).json({
+      habits: localizedDailyHabits,
+      currentPage: page,
+      totalHabits,
+      totalPages: Math.ceil(totalHabits / limit),
+    });
   } catch (err) {
     console.log(`ERROR in getUserHabits controller`, err.message);
     res.status(500).json({ message: "Internal Server Error" });
