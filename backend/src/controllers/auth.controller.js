@@ -278,6 +278,10 @@ export const getUserHabits = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
+    console.log(
+      `Fetching habits for userId: ${userId}, page: ${page}, limit: ${limit}, timezone: ${timezone}`
+    );
+
     if (!timezone) {
       return res.status(400).json({ message: "Timezone is required" });
     }
@@ -287,13 +291,19 @@ export const getUserHabits = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    console.log("User found:", user); // Log the user object
+
     const dailyHabitsArray = Array.from(user.dailyHabits.entries());
+
+    console.log("Daily habits array:", dailyHabitsArray); // Log the habits array
 
     // Sort by date (newest to oldest)
     dailyHabitsArray.sort((a, b) => new Date(b[0]) - new Date(a[0]));
 
     // Apply pagination
     const paginatedHabits = dailyHabitsArray.slice(skip, skip + limit);
+
+    console.log("Paginated habits:", paginatedHabits); // Log paginated habits
 
     const localizedDailyHabits = paginatedHabits.map(([dateString, counts]) => {
       const localizedDate = new Date(dateString);
@@ -314,7 +324,16 @@ export const getUserHabits = async (req, res) => {
       };
     });
 
+    console.log("Localized habits:", localizedDailyHabits); // Log localized habits
+
     const totalHabits = dailyHabitsArray.length;
+
+    console.log("Response:", {
+      habits: localizedDailyHabits,
+      currentPage: page,
+      totalHabits,
+      totalPages: Math.ceil(totalHabits / limit),
+    });
 
     res.status(200).json({
       habits: localizedDailyHabits,

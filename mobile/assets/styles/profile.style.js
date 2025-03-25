@@ -111,9 +111,14 @@ export const style = StyleSheet.create({
     borderRadius: 8,
     marginRight: 12,
   },
+  bookInfoDate: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
   bookInfo: {
     flex: 1,
     justifyContent: "space-between",
+    alignItems: "flex-end",
   },
   bookTitle: {
     fontSize: 16,
