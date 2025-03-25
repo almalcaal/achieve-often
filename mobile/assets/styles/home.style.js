@@ -67,6 +67,14 @@ export const style = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.textPrimary,
   },
+  goodHabitButton: {
+    padding: 8,
+    justifyContent: "center",
+  },
+  badHabitButton: {
+    padding: 8,
+    justifyContent: "center",
+  },
   bookImageContainer: {
     width: "100%",
     height: 200,

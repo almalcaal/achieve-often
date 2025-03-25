@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import LogoutButton from "../../components/LogoutButton";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { style } from "../../assets/styles/profile.style";
 import ProfileHeader from "../../components/ProfileHeader";
 import { useAuthStore } from "../../store/authStore";
@@ -16,6 +16,10 @@ import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
 
 export default function Profile() {
+  console.log(
+    "timezone baby:",
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
   const { user, token } = useAuthStore();
   const router = useRouter();
   const [habits, setHabits] = useState([]);
@@ -61,6 +65,13 @@ export default function Profile() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // used to refresh data when screen is "focused"
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     fetchData();
+  //   }, [])
+  // );
 
   const handleRefresh = async () => {
     setRefreshing(true);
