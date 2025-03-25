@@ -3,9 +3,31 @@ import { StyleSheet } from "react-native";
 import COLORS from "../../constants/colors.js";
 
 export const style = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
+  emptyContainer: {
+    flex: 1, // Takes up the top half (initially empty)
+  },
+  contentContainer: {
+    flex: 1, // Takes up the bottom half (your content)
+    justifyContent: "flex-end", // Center content vertically
+    // backgroundColor: "pink",
+    paddingBottom: 40,
+  },
+  headerContainer: {
+    marginBottom: 15,
+  },
+  headerText: {
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: 700,
+  },
+  subHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginTop: 15,
+  },
+  subHeaderText: {
+    fontSize: 18,
+    fontWeight: 400,
   },
   loadingContainer: {
     flex: 1,
@@ -67,13 +89,23 @@ export const style = StyleSheet.create({
     fontWeight: "600",
     color: COLORS.textPrimary,
   },
+  habitButtonsMainContainer: {
+    // color: "red",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+  habitButtonsSubContainer: {
+    // color: "red",
+  },
   goodHabitButton: {
     padding: 8,
     justifyContent: "center",
+    // backgroundColor: COLORS.goodButton,
   },
   badHabitButton: {
     padding: 8,
     justifyContent: "center",
+    // backgroundColor: COLORS.badButton,
   },
   bookImageContainer: {
     width: "100%",

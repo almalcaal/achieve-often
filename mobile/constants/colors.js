@@ -11,6 +11,8 @@ const COLORS = {
   border: "#c8e6c9",
   white: "#ffffff",
   black: "#000000",
+  goodButton: "green",
+  badButton: "red",
 };
 
 // RETRO
