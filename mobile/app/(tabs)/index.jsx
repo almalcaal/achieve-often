@@ -1,11 +1,19 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ScrollView, // Import ScrollView
+  RefreshControl, // Import RefreshControl
+} from "react-native";
+import React, { useEffect, useState, useCallback } from "react"; // Import useCallback
 import { style } from "../../assets/styles/home.style";
 import { BASE_URL } from "../../constants/urls";
 import { useAuthStore } from "../../store/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { formatDate } from "../../lib/utils";
+import COLORS from "../../constants/colors";
 
 export default function Home() {
   const router = useRouter();
@@ -16,10 +24,13 @@ export default function Home() {
     badCount: 0,
   });
   const { user, token } = useAuthStore();
+  const [refreshing, setRefreshing] = useState(false); // Add refreshing state
 
   const fetchTodayHabits = async () => {
     try {
-      setLoading(true);
+      if (!refreshing) {
+        setLoading(true);
+      }
       const { _id: userId } = user;
       const response = await fetch(
         `${BASE_URL}/auth/${userId}/today?timezone=${
@@ -38,10 +49,16 @@ export default function Home() {
       Alert.alert("Error", "Failed to fetch habits.");
     } finally {
       setLoading(false);
+      setRefreshing(false); // Set refreshing to false when done
     }
   };
 
   useEffect(() => {
+    fetchTodayHabits();
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
     fetchTodayHabits();
   }, []);
 
@@ -91,44 +108,71 @@ export default function Home() {
   };
 
   return (
-    <View style={style.container}>
-      <View>
-        <Text>{formatDate(todayHabits.date)}</Text>
-        <View>
-          <Text>Good: {todayHabits.goodCount}</Text>
-          <Text>Bad: {todayHabits.badCount}</Text>
+    <ScrollView
+      style={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      contentContainerStyle={{ flexGrow: 1 }}
+    >
+      <View style={style.emptyContainer}></View>
+      <View style={style.contentContainer}>
+        <View style={style.headerContainer}>
+          <Text style={style.headerText}>{formatDate(todayHabits.date)}</Text>
+          <View style={style.subHeaderContainer}>
+            <Text style={style.subHeaderText}>
+              Good: {todayHabits.goodCount}
+            </Text>
+            <Text style={style.subHeaderText}>Bad: {todayHabits.badCount}</Text>
+          </View>
+        </View>
+        <View style={style.habitButtonsMainContainer}>
+          <View style={style.habitButtonsSubContainer}>
+            <TouchableOpacity
+              style={style.goodHabitButton}
+              onPress={incrementGoodHabit}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={70}
+                style={{ color: COLORS.goodButton }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.goodHabitButton}
+              onPress={decrementGoodHabit}
+            >
+              <Ionicons
+                name="remove-circle-outline"
+                size={70}
+                style={{ color: COLORS.goodButton }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View>
+            <TouchableOpacity
+              style={style.badHabitButton}
+              onPress={incrementBadHabit}
+            >
+              <Ionicons
+                name="add-circle-outline"
+                size={70}
+                style={{ color: COLORS.badButton }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.badHabitButton}
+              onPress={decrementBadHabit}
+            >
+              <Ionicons
+                name="remove-circle-outline"
+                size={70}
+                style={{ color: COLORS.badButton }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-      <View>
-        <View>
-          <TouchableOpacity
-            style={style.goodHabitButton}
-            onPress={incrementGoodHabit}
-          >
-            <Ionicons name="add-circle-outline" size={40} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={style.goodHabitButton}
-            onPress={decrementGoodHabit}
-          >
-            <Ionicons name="remove-circle-outline" size={40} />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <TouchableOpacity
-            style={style.badHabitButton}
-            onPress={incrementBadHabit}
-          >
-            <Ionicons name="add-circle-outline" size={40} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={style.badHabitButton}
-            onPress={decrementBadHabit}
-          >
-            <Ionicons name="remove-circle-outline" size={40} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+    </ScrollView>
   );
 }
