@@ -346,3 +346,39 @@ export const getUserHabits = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// @desc            Get today's habits
+// @route           GET /api/auth/:userId/today
+// @access          Private
+export const getTodayHabits = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const timezone = req.query.timezone;
+
+    if (!timezone) {
+      return res.status(400).json({ message: "Timezone is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const startOfUserDayUTC = getStartOfDayInUserTimezone(new Date(), timezone);
+    const dateString = startOfUserDayUTC.toISOString().split("T")[0];
+
+    const dailyCounts = user.dailyHabits.get(dateString) || {
+      goodCount: 0,
+      badCount: 0,
+    };
+
+    res.status(200).json({
+      date: dateString,
+      goodCount: dailyCounts.goodCount,
+      badCount: dailyCounts.badCount,
+    });
+  } catch (err) {
+    console.log(`ERROR in getTodayHabits controller`, err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

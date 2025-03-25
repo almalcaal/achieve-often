@@ -3,6 +3,7 @@ import express from "express";
 import {
   decrementBadHabit,
   decrementGoodHabit,
+  getTodayHabits,
   getUserHabits,
   incrementBadHabit,
   incrementGoodHabit,
@@ -22,5 +23,6 @@ router.put("/:userId/good/decrement", decrementGoodHabit);
 router.put("/:userId/bad/decrement", decrementBadHabit);
 
 router.get("/:userId/habits", getUserHabits);
+router.get("/:userId/today", getTodayHabits);
 
 export default router;
