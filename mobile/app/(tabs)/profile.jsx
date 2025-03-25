@@ -29,7 +29,6 @@ export default function Profile() {
     try {
       setIsLoading(true);
       const { _id: userId } = user;
-      console.log("HERE DA ID DOUGH:", userId);
       const response = await fetch(
         `${BASE_URL}/auth/${userId}/habits?page=${page}&limit=10&timezone=${
           Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -74,7 +73,7 @@ export default function Profile() {
   const renderHabitItem = ({ item }) => (
     <View style={style.bookItem}>
       <View style={style.bookInfoDate}>
-        <Text style={style.bookDate}>{item.localizedDate}</Text>
+        <Text style={style.bookDate}>🗓️ {item.localizedDate}</Text>
       </View>
       <View style={style.bookInfo}>
         <Text style={style.bookCaption}>Good Habits: {item.goodCount}</Text>
