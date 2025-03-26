@@ -73,6 +73,20 @@ export const style = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 8,
   },
+  deleteButton: {
+    backgroundColor: COLORS.alertButton,
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 24,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
   booksHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -139,10 +153,6 @@ export const style = StyleSheet.create({
   bookDate: {
     fontSize: 12,
     color: COLORS.textSecondary,
-  },
-  deleteButton: {
-    padding: 8,
-    justifyContent: "center",
   },
   emptyContainer: {
     alignItems: "center",

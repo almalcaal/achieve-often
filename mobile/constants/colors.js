@@ -15,6 +15,7 @@ const COLORS = {
   black: "#000000",
   goodButton: "green",
   badButton: "red",
+  alertButton: "rgba(225, 0, 0, 1)",
 };
 
 // RETRO

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../constants/urls";
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   user: null,
   token: null,
   isLoading: false,
@@ -118,6 +118,43 @@ export const useAuthStore = create((set) => ({
     } catch (err) {
       console.log("Error in logout useAuthStore:", err);
 
+      return { success: false, error: err.message };
+    }
+  },
+
+  deleteUser: async (userId) => {
+    console.log("hola");
+    set({ isLoading: true });
+    console.log("in zustand", userId);
+
+    try {
+      const token = get().token;
+
+      if (!token || !userId) {
+        throw new Error("User not authenticated.");
+      }
+
+      const response = await fetch(`${BASE_URL}/auth/${userId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete user.");
+      }
+
+      // If successful, clear user data from AsyncStorage and Zustand
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("user");
+      set({ token: null, user: null, isLoading: false });
+
+      return { success: true };
+    } catch (err) {
+      set({ isLoading: false });
+      console.log("Error in deleteUser useAuthStore:", err);
       return { success: false, error: err.message };
     }
   },

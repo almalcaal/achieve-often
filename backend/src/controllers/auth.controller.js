@@ -118,6 +118,26 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// @desc            Delete user account
+// @route           DELETE /api/auth/:userId
+// @access          Private
+export const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "User account deleted successfully" });
+  } catch (err) {
+    console.log(`ERROR in deleteUser controller`, err.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 // @desc            Increment user good habit
 // @route           PUT /api/auth/:userId/good
 // @access          Private
