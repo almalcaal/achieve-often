@@ -14,6 +14,7 @@ import { useAuthStore } from "../../store/authStore";
 import { BASE_URL } from "../../constants/urls";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../../constants/colors";
+import DeleteButton from "../../components/DeleteButton";
 
 export default function Profile() {
   console.log(
@@ -105,6 +106,7 @@ export default function Profile() {
   return (
     <View style={style.container}>
       <ProfileHeader />
+      <DeleteButton />
       <LogoutButton />
 
       {/* habit history */}
