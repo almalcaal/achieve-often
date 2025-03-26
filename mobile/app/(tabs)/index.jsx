@@ -109,7 +109,7 @@ export default function Home() {
 
   return (
     <ScrollView
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: COLORS.primary10 }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -139,7 +139,7 @@ export default function Home() {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={style.goodHabitButton}
+              style={style.goodHabitButtonDecrement}
               onPress={decrementGoodHabit}
             >
               <Ionicons
@@ -161,7 +161,7 @@ export default function Home() {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={style.badHabitButton}
+              style={style.badHabitButtonDecrement}
               onPress={decrementBadHabit}
             >
               <Ionicons

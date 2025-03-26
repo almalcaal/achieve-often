@@ -4,13 +4,13 @@ import COLORS from "../../constants/colors.js";
 
 export const style = StyleSheet.create({
   emptyContainer: {
-    flex: 1, // Takes up the top half (initially empty)
+    flex: 0.45, // Takes up the top half (initially empty)
   },
   contentContainer: {
-    flex: 1, // Takes up the bottom half (your content)
+    flex: 0.55, // Takes up the bottom half (your content)
     justifyContent: "flex-end", // Center content vertically
     // backgroundColor: "pink",
-    paddingBottom: 40,
+    // paddingBottom: 40,
   },
   headerContainer: {
     marginBottom: 15,
@@ -92,17 +92,33 @@ export const style = StyleSheet.create({
   habitButtonsMainContainer: {
     // color: "red",
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
   },
   habitButtonsSubContainer: {
     // color: "red",
+    borderRightWidth: 15,
+    borderColor: "rgba(0,0,0, 0)",
   },
   goodHabitButton: {
+    padding: 8,
+    justifyContent: "center",
+    borderBottomWidth: 15,
+    borderColor: "rgba(0,0,0, 0)",
+    // backgroundColor: COLORS.goodButton,
+  },
+  goodHabitButtonDecrement: {
     padding: 8,
     justifyContent: "center",
     // backgroundColor: COLORS.goodButton,
   },
   badHabitButton: {
+    padding: 8,
+    justifyContent: "center",
+    borderBottomWidth: 15,
+    borderColor: "rgba(0,0,0, 0)",
+    // backgroundColor: COLORS.badButton,
+  },
+  badHabitButtonDecrement: {
     padding: 8,
     justifyContent: "center",
     // backgroundColor: COLORS.badButton,
