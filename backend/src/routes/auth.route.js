@@ -9,12 +9,17 @@ import {
   incrementGoodHabit,
   loginUser,
   registerUser,
+  deleteUser,
 } from "../controllers/auth.controller.js";
+
+import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+
+router.delete("/:userId", protectRoute, deleteUser);
 
 router.put("/:userId/good", incrementGoodHabit);
 router.put("/:userId/bad", incrementBadHabit);
